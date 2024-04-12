@@ -146,6 +146,7 @@ class FilePickerWeb extends FilePicker {
     _target.children.clear();
     _target.children.add(uploadInput);
     uploadInput.click();
+    _target.children.clear();
 
     final List<PlatformFile>? files = await filesCompleter.future;
 
