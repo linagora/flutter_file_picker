@@ -5,11 +5,11 @@ import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:file_picker/src/utils.dart';
 import 'package:file_picker/src/exceptions.dart';
+import 'package:file_picker/src/utils.dart';
 import 'package:file_picker/src/windows/file_picker_windows_ffi_types.dart';
 import 'package:path/path.dart';
-import 'package:win32/winrt.dart';
+import 'package:win32/win32.dart';
 
 FilePicker filePickerWithFFI() => FilePickerWindows();
 
@@ -91,8 +91,8 @@ class FilePickerWindows extends FilePicker {
     bool lockParentWindow = false,
     String? initialDirectory,
   }) {
-    int hr = CoInitializeEx(
-        nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    int hr = CoInitializeEx(nullptr,
+        COINIT.COINIT_APARTMENTTHREADED | COINIT.COINIT_DISABLE_OLE1DDE);
 
     if (!SUCCEEDED(hr)) throw WindowsException(hr);
 
@@ -134,7 +134,7 @@ class FilePickerWindows extends FilePicker {
       fileDialog.release();
       CoUninitialize();
 
-      if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+      if (hr == HRESULT_FROM_WIN32(WIN32_ERROR.ERROR_CANCELLED)) {
         return Future.value(null);
       }
       throw WindowsException(hr);
@@ -263,7 +263,7 @@ class FilePickerWindows extends FilePicker {
     bool lastCharWasNull = false;
     // ignore: literal_only_boolean_expressions
     while (true) {
-      final char = openFileNameW.lpstrFile.cast<Uint16>().elementAt(i).value;
+      final char = openFileNameW.lpstrFile.cast<Uint16>()[i];
       final currentCharIsNull = char == 0;
       if (currentCharIsNull && lastCharWasNull) {
         break;
